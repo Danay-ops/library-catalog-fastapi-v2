@@ -2,7 +2,7 @@ import os
 import json
 from fastapi import HTTPException
 import requests
-from ..core.setings import API_KEYS, BIN_ID
+from ..core.setings import API_KEYS, BIN_ID, BASE_URL, X_Master_Key
 from .library_api import OpenLibraryAPI
 from .base_api_client import BaseApiClient
 from ..core.logger import logger
@@ -10,7 +10,7 @@ from ..core.logger import logger
 class JsonBinClient(BaseApiClient):
     def __init__(self):
         self.api_key = API_KEYS
-        self.base_url = 'https://api.jsonbin.io/v3/b/'
+        self.base_url = BASE_URL
         self.bin_id = BIN_ID
     
     # def get_books(self) -> dict:
@@ -65,7 +65,7 @@ class JsonBinClient(BaseApiClient):
 
         get_url = f'{self.base_url}{self.bin_id}/latest'
         headers = {
-            'X-Master-Key': '$2a$10$VTBr0cpzUWdfTIfyl3Rb5u60I6TjkpAlesONyjYW6YoDpu1jlSbGe',  # именно Master-Key для записи
+            'X-Master-Key': X_Master_Key,  # именно Master-Key для записи
             'Content-Type': 'application/json'
         }
         response = requests.get(get_url, headers=headers)
@@ -96,7 +96,7 @@ class JsonBinClient(BaseApiClient):
     def update_book(self, book: dict) -> dict:
         get_url = f'{self.base_url}{self.bin_id}/latest'
         headers = {
-            'X-Master-Key': '$2a$10$VTBr0cpzUWdfTIfyl3Rb5u60I6TjkpAlesONyjYW6YoDpu1jlSbGe',  
+            'X-Master-Key': X_Master_Key, 
             'Content-Type': 'application/json'
         }
         response = requests.get(get_url, headers=headers)
@@ -117,7 +117,7 @@ class JsonBinClient(BaseApiClient):
     def delete(self, book_id: int) -> dict:
         get_url = f'{self.base_url}{self.bin_id}/latest'
         headers = {
-            'X-Master-Key': '$2a$10$VTBr0cpzUWdfTIfyl3Rb5u60I6TjkpAlesONyjYW6YoDpu1jlSbGe',  
+            'X-Master-Key': X_Master_Key,  
             'Content-Type': 'application/json'
         }
         response = requests.get(get_url, headers=headers)

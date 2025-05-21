@@ -1,14 +1,19 @@
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Request
 from fastapi import Depends
-from .db.session import get_db, engine
-from .services.repository import BookRepository
-from sqlalchemy.orm import Session
+
 from .utils.jsonbin_client import JsonBinClient
+from .db.session import get_db, engine
+from .services.repository import AbstractBookRepository, SQLBookRepository
+from sqlalchemy.orm import Session
 from .db.models import Book
 from .models.schemas import BookSchema
 import json
 import os
+from sqlalchemy.ext.asyncio import AsyncSession
+from .dependencies.dependencies import get_json_bin_client
+from src.library_catalog.dependencies.dependencies import get_book_service
+from src.library_catalog.services.book_service import ServiceBook
 
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -17,12 +22,13 @@ from .core.exception_handlers import (
     validation_exception_handler,
     unhandled_exception_handler,
 )
-
-
+from src.library_catalog.routes.books import router
 
 
 app = FastAPI()
-
+@app.on_event("startup")
+async def on_startup():
+    await init_db()
 
 # Регистрируем глобальные обработчики ошибок
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
@@ -32,53 +38,93 @@ app.add_exception_handler(Exception, unhandled_exception_handler)
 BOOKS = 'books.json'
 
 
-Book.metadata.create_all(bind=engine)
+# Book.metadata.create_all(bind=engine)
 
-cloud_client = JsonBinClient()
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Book.metadata.create_all)
+
+app.include_router(router)
 
 
-@app.get("/books")
-async def get_books(author: Optional[str] = None, 
-                    genre: Optional[str] = None, 
-                    db: Session = Depends(get_db)):
+# @app.get("/books", response_model=list[BookSchema])
+# async def get_books(author: Optional[str] = None, 
+#                     genre: Optional[str] = None, 
+#                     skip: int = 0,
+#                     limit: int = 100,
+#                     service: ServiceBook  = Depends(get_book_service)):
+#     """
+#     Получить список книг с возможностью фильтрации по автору и жанру.
+
+#     Args:
+#         author: Фильтр по автору (опционально)
+#         genre: Фильтр по жанру (опционально)
+
+
+#     Returns:
+#         List[BookSchema]: Список книг, соответствующих критериям
+#     """
+
+#     return await service.get_all(author, genre, skip, limit)
+
+# @app.get("/books/{title}", response_model=list[BookSchema])
+# async def get_book(title: str, service: ServiceBook = Depends(get_book_service)):
+#     """
+#     Получить книгу по названию.
+
+#     Args:
+#         title: Название книги
+
+#     Returns:
+#         List[BookSchema]: Список книг, соответствующих критериям
+#     """
+
+#     return await service.get_by_title_service(title)
+
+# @app.post("/books", response_model=BookSchema)
+# async def add_book( book: BookSchema, 
+#                     service: ServiceBook = Depends(get_book_service)):
+#     """
+#     Добавить новую книгу.
+
+#     Args:
+#         book: Книга для добавления
+
+#     Returns:
+#         BookSchema: Добавленная книга
+#     """
+
+#     return await service.add_new_book(book)
+
+# @app.put("/books", response_model=BookSchema)
+# async def update_book(  book: BookSchema, 
+#                         service: ServiceBook = Depends(get_book_service)):
+
+#     """
+#     Обновить информацию о книге.
+
+#     Args:
+#         book: Книга для обновления
+
+#     Returns:
+#         BookSchema: Обновленная книга
+#     """
     
-    repo = BookRepository(db)
+#     return await service.update(book)
 
-    all_books = repo.get_all()
+# @app.delete("/books/{book_id}")
+# async def delete_book(  book_id: int, 
+#                         service: ServiceBook = Depends(get_book_service)):
+#     """
+#     Удалить книгу по ID.
 
-    if author:
-        all_books = [b for b in all_books if author in b.author]
+#     Args:
+#         book_id: ID книги для удаления
 
-    if genre:
-        all_books = [b for b in all_books if genre in b.genre]
-    
-    return all_books
-
-@app.get("/title/{title}")
-async def get_book(title: str, db: Session = Depends(get_db)):
-    repo = BookRepository(db)
-    book = repo.get_by_title(title)
-    if not book:
-        raise HTTPException(status_code=404, detail=f"Книга с названием '{title}' не найдена")
-    return book
-
-@app.post("/books", response_model=BookSchema)
-async def add_book(book: BookSchema, db: Session = Depends(get_db)):
-    repo = BookRepository(db, cloud_client)
-
-    return repo.add(book)
-
-@app.put("/books", response_model=BookSchema)
-async def update_book(book: BookSchema, db: Session = Depends(get_db)):
-    repo = BookRepository(db, cloud_client)
-
-    return repo.update(book)
-
-@app.delete("/books/{book_id}")
-async def delete_book(book_id: int, db: Session = Depends(get_db)):
-    repo = BookRepository(db, cloud_client)
-
-    return repo.delete(book_id)
+#     Returns:
+#         message: Сообщение об успешном удалении
+#     """
+#     return await service.delete(book_id)
 
 
 

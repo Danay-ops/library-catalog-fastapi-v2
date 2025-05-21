@@ -1,2 +1,10 @@
-API_KEYS = '$2a$10$Ys6XrpsIYJoBLwA40XcaR.KHqddbOOM2ufXx3Qbo7K4Ibo/Uo3CNW'
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+API_KEYS = os.getenv('API_KEYS')
 BIN_ID = '6829af148561e97a50166af7'
+BASE_URL = os.getenv('BASE_URL')
+X_Master_Key = os.getenv('X_Master_Key')
+BASE_URL_OPEN_LIBRARY = os.getenv('BASE_URL_OPEN_LIBRARY')

@@ -1,9 +1,10 @@
 import requests
 from .base_api_client import BaseApiClient
+from ..core.setings import BASE_URL_OPEN_LIBRARY
 
 
 class OpenLibraryAPI(BaseApiClient):
-    BASE_URL = "https://openlibrary.org/search.json?"
+    BASE_URL = BASE_URL_OPEN_LIBRARY
 
     def get(self, title:str, author:str) -> dict:
         params = {
