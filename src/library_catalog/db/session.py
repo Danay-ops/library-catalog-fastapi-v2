@@ -1,3 +1,4 @@
+from src.library_catalog.core.setings import SQLALCHEMY_DATABASE_URL
 # from sqlalchemy import create_engine
 # from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 # from sqlalchemy.orm import sessionmaker
@@ -20,7 +21,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, DeclarativeMeta, DeclarativeBase
 
 # Асинхронный URL подключения с asyncpg
-SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://user:password@db/testdb"
+SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL
 
 # Создаем асинхронный движок
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
