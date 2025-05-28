@@ -1,3 +1,6 @@
+#test pre-commit hook
+
+
 from fastapi import FastAPI
 
 from .db.session import engine
@@ -24,6 +27,7 @@ app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(Exception, unhandled_exception_handler)
 
 BOOKS = 'books.json'
+
 
 
 # Book.metadata.create_all(bind=engine)
