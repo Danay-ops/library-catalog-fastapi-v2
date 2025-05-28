@@ -6,8 +6,6 @@ from sqlalchemy.orm import Session
 from src.library_catalog.services.abstract_book_repository import AbstractBookRepository
 from ..db.models import Book
 from ..models.schemas import BookSchema
-from ..utils.jsonbin_client import JsonBinClient
-from ..utils.library_api import OpenLibraryAPI
 from ..utils.base_api_client import BaseApiClient
 from ..core.logger import logger
 

@@ -1,19 +1,7 @@
-from typing import Optional
-from fastapi import FastAPI, HTTPException, Request
-from fastapi import Depends
+from fastapi import FastAPI
 
-from .utils.jsonbin_client import JsonBinClient
-from .db.session import get_db, engine
-from .services.repository import AbstractBookRepository, SQLBookRepository
-from sqlalchemy.orm import Session
+from .db.session import engine
 from .db.models import Book
-from .models.schemas import BookSchema
-import json
-import os
-from sqlalchemy.ext.asyncio import AsyncSession
-from .dependencies.dependencies import get_json_bin_client
-from src.library_catalog.dependencies.dependencies import get_book_service
-from src.library_catalog.services.book_service import ServiceBook
 
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException

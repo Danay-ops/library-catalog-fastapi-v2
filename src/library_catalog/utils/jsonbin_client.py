@@ -1,5 +1,3 @@
-import os
-import json
 from fastapi import HTTPException
 import requests
 from ..core.setings import API_KEYS, BIN_ID, BASE_URL, X_Master_Key
