@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "title": "1984",
+        "author": "Джордж Оруэлл",
+        "year": 1949,
+        "genre": "Антиутопия",
+        "pages": 328,
+        "available": true
+    },
+    {
+        "id": 2,
+        "title": "Мастер и Маргарита",
+        "author": "Михаил Булгаков",
+        "year": 1967,
+        "genre": "Роман",
+        "pages": 512,
+        "available": true
+    }
+]
